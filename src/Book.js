@@ -3,11 +3,16 @@ import React, { Component } from 'react'
 class Book extends Component {
   render() {
     const { book } = this.props
+    const bookCover = {
+      width: 128,
+      height: 193,
+      backgroundImage: 'url(' + book.imageLinks.thumbnail + ')'
+    }
     return (
       <li>
         <div className="book">
           <div className="book-top">
-            <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: 'url(' + book.imageLinks.thumbnail + ')' }}></div>
+            <div className="book-cover" style={bookCover}></div>
             <div className="book-shelf-changer">
               <select value={book.shelf} onChange={(event) => this.props.onUpdateBook(book, event.target.value)}>
                 <option value="none" disabled>Move to...</option>

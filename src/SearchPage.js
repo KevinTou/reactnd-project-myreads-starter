@@ -30,11 +30,13 @@ class SearchPage extends Component {
   }
 
   updateQuery = (query) => {
-    this.setState({ query: query.trim() })
+    this.setState({ query })
     BooksAPI.search(this.state.query).then((books) => {
       if (typeof books !== 'undefined') {
         let results = this.addToShelf(books);
         this.setState({ books: results })
+      } else {
+        this.setState({ books: [] })
       }
     })
   }
@@ -55,7 +57,7 @@ class SearchPage extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {typeof this.state.books !== 'undefined' && (
+            {typeof this.state.books !== 'undefined' && this.state.query !== '' && (
               this.state.books.map((book) =>
                 <Book
                   key={book.id}
