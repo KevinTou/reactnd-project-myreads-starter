@@ -3,6 +3,8 @@ import Book from './Book'
 import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import PropTypes from 'prop-types'
+import escapeRegExp from 'escape-string-regexp'
+import sortBy from 'sort-by'
 
 class SearchPage extends Component {
   static PropTypes = {
@@ -42,6 +44,16 @@ class SearchPage extends Component {
   }
 
   render() {
+    let visibleBooks
+    if (this.state.query) {
+      const match = new RegExp(escapeRegExp(this.state.query), 'i')
+      visibleBooks = this.state.books.filter((book) => match.test(book.title))
+    } else {
+      visibleBooks = this.state.books
+    }
+
+    visibleBooks.sort(sortBy('title'))
+
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -58,7 +70,7 @@ class SearchPage extends Component {
         <div className="search-books-results">
           <ol className="books-grid">
             {typeof this.state.books !== 'undefined' && this.state.query !== '' && (
-              this.state.books.map((book) =>
+              visibleBooks.map((book) =>
                 <Book
                   key={book.id}
                   book={book}
