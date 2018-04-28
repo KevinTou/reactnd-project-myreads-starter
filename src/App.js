@@ -7,8 +7,7 @@ import './App.css'
 
 class BooksApp extends React.Component {
   state = {
-    books: [],
-    query: ''
+    books: []
   }
 
   componentDidMount() {

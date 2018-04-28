@@ -18,15 +18,13 @@ class SearchPage extends Component {
 
   addToShelf = (books) => {
     const booksToAdd = books.map(book => {
-      let currentBooks = books.filter(selectedBook => {
-        return book.id === selectedBook.id;
-      })
-      let targetShelf = currentBooks.length & currentBooks[0].shelf
-      if (targetShelf) {
-        return { ...book, ...{ shelf: targetShelf } }
-      } else {
-        return book
-      }
+      book.shelf = "none"
+      this.props.books.map(books => {
+        if (book.id === books.id) {
+          book.shelf = books.shelf;
+        }
+      });
+      return book;
     })
     return booksToAdd
   }
@@ -74,6 +72,7 @@ class SearchPage extends Component {
                 <Book
                   key={book.id}
                   book={book}
+                  books={this.props.books}
                   onUpdateBook={(book, shelf) => {
                     this.props.onUpdateBook(book, shelf)
                   }}
