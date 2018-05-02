@@ -16,39 +16,17 @@ class BooksApp extends React.Component {
     })
   }
 
-  // Check to verify if the book is new or already in the shelf
-  isBookOnShelf(book) {
-    for (let i = 0; i < this.state.books.length; i++) {
-      if (this.state.books[i].id === book.id) {
-        return true
-      }
-    }
-    return false
-  }
-
-  updateBookState(book, shelf) {
-    if (this.isBookOnShelf(book)) {
-      BooksAPI.update(book, shelf)
-      this.setState(prevState => {
-        let books = prevState.books.map(b => {
-          if (b.id !== book.id) {
-            return b;
-          } else {
-            return { ...b, ...{ shelf } }
-          }
-        })
-        return { ...prevState, ...{ books } }
-      })
-    } else {
-      this.setState(prevState => {
-        let newBook = { ...book, ...{ shelf } };
-        let books = prevState.books.concat(newBook)
-        return { ...prevState, ...{ books } }
-      })
-    }
+  onChangeShelf = (newBook, newShelf) => {
+    BooksAPI.update(newBook, newShelf).then(response => {
+      newBook.shelf = newShelf
+      var updatedBooks = this.state.books.filter(book => book.id !== newBook.id)
+      updatedBooks.push(newBook);
+      this.setState({ books: updatedBooks })
+    })
   }
 
   render() {
+    const { books } = this.state
     return (
       <div className="app">
         <div className="list-books">
@@ -57,20 +35,14 @@ class BooksApp extends React.Component {
           </div>
           <Route exact path="/" render={() => (
             <BookLibrary
-              onUpdateBook={(book, shelf) => {
-                this.updateBookState(book, shelf)
-              }}
-              currentlyReadingBooks={this.state.books.filter((b) => b.shelf === "currentlyReading")}
-              wantToReadBooks={this.state.books.filter((b) => b.shelf === "wantToRead")}
-              readBooks={this.state.books.filter((b) => b.shelf === "read")}
+              books={ books }
+              onChangeShelf={ this.onChangeShelf }
             />
           )} />
           <Route path="/search" render={() => (
             <SearchPage
-              books={this.state.books}
-              onUpdateBook={(book, shelf) => {
-                this.updateBookState(book, shelf)
-              }}
+              books={ books }
+              onChangeShelf={ this.onChangeShelf }
             />
           )} />
         </div>
